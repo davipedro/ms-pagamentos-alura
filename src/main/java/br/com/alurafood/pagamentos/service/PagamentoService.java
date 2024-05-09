@@ -7,10 +7,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.com.alurafood.pagamentos.domain.pagamento.Pagamento;
-import br.com.alurafood.pagamentos.domain.pagamento.PagamentoReponseDTO;
+import br.com.alurafood.pagamentos.domain.pagamento.PagamentoResponseDTO;
+import br.com.alurafood.pagamentos.domain.pagamento.PagamentoUpdateDTO;
 import br.com.alurafood.pagamentos.domain.pagamento.PagamentoRequestDTO;
 import br.com.alurafood.pagamentos.domain.pagamento.Status;
 import br.com.alurafood.pagamentos.repository.PagamentoRepository;
+import jakarta.validation.constraints.NotNull;
 
 @Service
 public class PagamentoService {
@@ -21,29 +23,35 @@ public class PagamentoService {
     @Autowired
     private ModelMapper modelMapper;
 
-    public Page<PagamentoReponseDTO> obterTodos(Pageable paginacao) {
+    public Page<PagamentoResponseDTO> obterTodos(Pageable paginacao) {
         return repository
                 .findAll(paginacao)
-                .map(p -> modelMapper.map(p, PagamentoReponseDTO.class));
+                .map(p -> modelMapper.map(p, PagamentoResponseDTO.class));
     }
 
-    public PagamentoReponseDTO criarPagamento(PagamentoRequestDTO dados){
+    public PagamentoResponseDTO criarPagamento(PagamentoRequestDTO dados){
         var pagamento = modelMapper.map(dados, Pagamento.class);
         pagamento.setStatus(Status.CRIADO);
         repository.save(pagamento);
 
-        return modelMapper.map(pagamento, PagamentoReponseDTO.class);
+        return modelMapper.map(pagamento, PagamentoResponseDTO.class);
     }
 
-    public PagamentoReponseDTO atualizarPagamento(Long id, PagamentoRequestDTO dados){
+    public PagamentoResponseDTO atualizarPagamento(Long id, PagamentoUpdateDTO dados){
         var pagamento = modelMapper.map(dados, Pagamento.class);
         pagamento.setId(id);
         pagamento = repository.save(pagamento);
         
-        return modelMapper.map(pagamento, PagamentoReponseDTO.class);
+        return modelMapper.map(pagamento, PagamentoResponseDTO.class);
     }
-
+    
+    public PagamentoResponseDTO obterPorId(@NotNull Long id) {
+        Pagamento pagamento = repository.findById(id).orElseThrow();
+        return modelMapper.map(pagamento, PagamentoResponseDTO.class);
+    }
+    
     public void excluirPagamento(Long id){
         repository.deleteById(id);
     }
+
 }
