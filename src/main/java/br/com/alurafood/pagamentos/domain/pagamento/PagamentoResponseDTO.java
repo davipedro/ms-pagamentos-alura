@@ -2,7 +2,8 @@ package br.com.alurafood.pagamentos.domain.pagamento;
 
 import java.math.BigDecimal;
 
-public record PagamentoReponseDTO(
+public record PagamentoResponseDTO(
+    Long id,
     BigDecimal valor,
     String nome,
     String numero,
@@ -11,5 +12,4 @@ public record PagamentoReponseDTO(
     Status status,
     Long pedidoId,
     Long formaDePagamentoId) {
-    
 }
