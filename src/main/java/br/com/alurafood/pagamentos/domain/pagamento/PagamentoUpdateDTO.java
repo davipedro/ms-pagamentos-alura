@@ -4,14 +4,20 @@ import java.math.BigDecimal;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record PagamentoUpdateDTO(
-    BigDecimal valor,
-    String nome,
-    String numero,
-    String expiracao,
-    String codigo,
-    Status status,
-    Long formaDePagamentoId) {
-    
+@NoArgsConstructor
+@Getter
+@Setter
+public class PagamentoUpdateDTO{
+    private BigDecimal valor;
+    private String nome;
+    private String numero;
+    private String expiracao;
+    private String codigo;
+    private Status status;
+    private Long formaDePagamentoId;
 }

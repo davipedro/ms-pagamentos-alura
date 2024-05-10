@@ -2,14 +2,24 @@ package br.com.alurafood.pagamentos.domain.pagamento;
 
 import java.math.BigDecimal;
 
-public record PagamentoResponseDTO(
-    Long id,
-    BigDecimal valor,
-    String nome,
-    String numero,
-    String expiracao,
-    String codigo,
-    Status status,
-    Long pedidoId,
-    Long formaDePagamentoId) {
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+@NoArgsConstructor
+@Getter
+@Setter
+public class PagamentoResponseDTO{
+    private Long id;
+    private BigDecimal valor;
+    private String nome;
+    private String numero;
+    private String expiracao;
+    private String codigo;
+    private Status status;
+    private Long pedidoId;
+    private Long formaDePagamentoId;
 }
