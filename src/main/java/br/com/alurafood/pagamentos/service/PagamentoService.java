@@ -31,6 +31,7 @@ public class PagamentoService {
 
     public PagamentoResponseDTO criarPagamento(PagamentoRequestDTO dados){
         var pagamento = modelMapper.map(dados, Pagamento.class);
+
         pagamento.setStatus(Status.CRIADO);
         repository.save(pagamento);
 
@@ -38,8 +39,22 @@ public class PagamentoService {
     }
 
     public PagamentoResponseDTO atualizarPagamento(Long id, PagamentoUpdateDTO dados){
-        var pagamento = modelMapper.map(dados, Pagamento.class);
-        pagamento.setId(id);
+        var pagamento = repository.findById(id).orElseThrow();
+
+        if (dados.getValor() != null) pagamento.setValor(dados.getValor());
+        
+        if (dados.getNome() != null) pagamento.setNome(dados.getNome());
+        
+        if (dados.getNumero() != null) pagamento.setNumero(dados.getNumero());
+        
+        if (dados.getExpiracao() != null) pagamento.setExpiracao(dados.getExpiracao());
+        
+        if (dados.getCodigo() != null) pagamento.setCodigo(dados.getCodigo());
+        
+        if (dados.getStatus() != null && Status.isStatusValido(dados.getStatus())) pagamento.setStatus(dados.getStatus());
+        
+        if (dados.getFormaDePagamentoId() != null) pagamento.setFormaDePagamentoId(dados.getFormaDePagamentoId());
+        
         pagamento = repository.save(pagamento);
         
         return modelMapper.map(pagamento, PagamentoResponseDTO.class);
