@@ -11,12 +11,18 @@ import br.com.alurafood.pagamentos.domain.pagamento.PagamentoResponseDTO;
 import br.com.alurafood.pagamentos.domain.pagamento.PagamentoUpdateDTO;
 import br.com.alurafood.pagamentos.domain.pagamento.PagamentoRequestDTO;
 import br.com.alurafood.pagamentos.domain.pagamento.Status;
+import br.com.alurafood.pagamentos.domain.pedido.PedidoResponse;
+import br.com.alurafood.pagamentos.infra.http.PedidoClient;
 import br.com.alurafood.pagamentos.repository.PagamentoRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
 
 @Service
 public class PagamentoService {
     
+    @Autowired
+    private PedidoClient pedido;
+
     @Autowired
     private PagamentoRepository repository;
 
@@ -62,11 +68,32 @@ public class PagamentoService {
     
     public PagamentoResponseDTO obterPorId(@NotNull Long id) {
         Pagamento pagamento = repository.findById(id).orElseThrow();
-        return modelMapper.map(pagamento, PagamentoResponseDTO.class);
+        PagamentoResponseDTO dto = modelMapper.map(pagamento, PagamentoResponseDTO.class);
+
+        PedidoResponse infoPedido = pedido.obterDetalhesPedido(id);
+
+        dto.setItens(infoPedido.getItens());
+
+        return dto;
     }
     
     public void excluirPagamento(Long id){
         repository.deleteById(id);
+    }
+
+    public void confirmarPagamento(Long id){
+        var pagamento = repository.findById(id).orElseThrow(EntityNotFoundException::new);
+
+        pagamento.setStatus(Status.CONFIRMADO);
+        repository.save(pagamento);
+        pedido.atualizaPagamento(pagamento.getPedidoId());
+    }
+
+    public void alteraStatus(Long id) {
+        var pagamento = repository.findById(id).orElseThrow(EntityNotFoundException::new);
+
+        pagamento.setStatus(Status.CONFIRMADO_SEM_INTEGRACAO);
+        repository.save(pagamento);
     }
 
 }
