@@ -15,9 +15,9 @@ public class PagamentoAMQPConfiguration {
     @Bean
     public Queue criaFila(){
         // uma das formas de criar uma fila
-        // return new Queue("pagamentos.concluido", false);
+        return new Queue("pagamento.concluido", false);
 
-        return QueueBuilder.nonDurable("pagamentos.concluido").build();
+        // return QueueBuilder.nonDurable("pagamentos.concluido").build();
     }
 
     @Bean
